@@ -80,12 +80,12 @@ import json
 PORT = 8001
 
 # Constants
-PATH_INDEX = "test.html"
-PATH_ASSETS = "src/assets/"
+PATH_INDEX = "assets.html"
+PATH_ASSETS = "assets/"
 #PATH_RESOURCES = "resources/"
 #PATH_MEDIA = "media/"
-PATH_ENVIRONMENT = "src/assets/cubemaps/"
-PATH_LIGHTMAPS = "src/lightmaps/"
+PATH_ENVIRONMENT = "assets/cubemaps/"
+PATH_LIGHTMAPS = "assets/lightmaps/"
 PATH_JAVASCRIPT = "js/"
 #AFRAME_ENABLED = "AFRAME_ENABLED"
 #AFRAME_HTTP_LINK = "AFRAME_HTTP_LINK"
@@ -138,10 +138,10 @@ class Server(threading.Thread):
             html = response.read()
 
 
-# Index html a-frame template
+# Assets html a-frame template
 def default_template():
-    if not bpy.data.texts.get('test.html'):
-        tpl = bpy.data.texts.new('test.html')
+    if not bpy.data.texts.get('assets.html'):
+        tpl = bpy.data.texts.new('assets.html')
         tpl.from_string('''<a-assets>${asset}</a-assets><a-entity>${entity}</a-entity>''')
 
 
@@ -684,7 +684,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
         showrenderer = 'renderer="antialias: '+str(scene.b_aa).lower()+'; colorManagement: '+str(scene.b_colorManagement).lower()+'; physicallyCorrectLights: '+str(scene.b_physicallyCorrectLights).lower()+';"'
 
         default_template()
-        t = Template( bpy.data.texts['test.html'].as_string() )
+        t = Template( bpy.data.texts['assets.html'].as_string() )
         s = t.substitute(
             asset=all_assets,
             entity=all_entities,
