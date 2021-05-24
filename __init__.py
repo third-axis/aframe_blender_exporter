@@ -56,11 +56,11 @@ THIRD PARTY SOFTWARE:
 
 
 bl_info = {
-    "name" : "Import-Export: a-frame webvr exporter",
-    "author" : "Alessandro Schillaci",
+    "name" : "Import-Export: Aframe Asset Exporter",
+    "author" : "Kitae Kim, Alessandro Schillaci",
     "description" : "Blender Exporter to AFrame WebVR application",
     "blender" : (2, 83, 0),
-    "version" : (0, 0, 7),
+    "version" : (0, 0, 1),
     "location" : "View3D",
     "warning" : "",
     "category" : "3D View"
@@ -144,7 +144,7 @@ def default_template():
         tpl = bpy.data.texts.new('index.html')
         tpl.from_string('''<!doctype html>
 <html lang="en">
-    <!-- Generated automatically by AFRAME Exporter for Blender - https://silverslade.itch.io/a-frame-blender-exporter -->
+    <!-- Adaptation of AFRAME Exporter for Blender - https://silverslade.itch.io/a-frame-blender-exporter -->
     <head>
         <title>WebXR Application</title>
         <link rel="icon" type="image/png" href="favicon.ico"/>
@@ -164,13 +164,7 @@ def default_template():
         <a-scene ${stats} ${joystick} ${render_shadows} ${renderer}>
             <!-- Assets -->
             <a-assets>${asset}
-                <img id="sky"                 src="./resources/sky.jpg">
-                <img id="icon-play"           src="./resources/play.png">
-                <img id="icon-pause"          src="./resources/pause.png">
-                <img id="icon-play-skip-back" src="./resources/play-skip-back.png">
-                <img id="icon-mute"           src="./resources/mute.png">
-                <img id="icon-volume-low"     src="./resources/volume-low.png">
-                <img id="icon-volume-high"    src="./resources/volume-high.png">
+
             </a-assets>
 
             <!-- Entities -->
@@ -195,15 +189,16 @@ def default_template():
             </a-entity>
 
             <!-- Lights -->
-            <a-entity light="intensity: ${directional_intensity}; castShadow: ${cast_shadows}; shadowBias: -0.001; shadowCameraFar: 501.02; shadowCameraBottom: 12; shadowCameraFov: 101.79; shadowCameraNear: 0; shadowCameraTop: -5; shadowCameraRight: 10; shadowCameraLeft: -10; shadowRadius: 2" position="1.36586 7.17965 1"></a-entity>
-            <a-entity light="type: ambient; intensity: ${ambient_intensity}"></a-entity>
+            <a-entity id="Directional Light" light="intensity: ${directional_intensity}; castShadow: ${cast_shadows}; shadowBias: -0.001; shadowCameraFar: 501.02; shadowCameraBottom: 12; shadowCameraFov: 101.79; shadowCameraNear: 0; shadowCameraTop: -5; shadowCameraRight: 10; shadowCameraLeft: -10; shadowRadius: 2" position="1.36586 7.17965 1"></a-entity>
+            <a-entity id="Ambient Light"  light="type: ambient; intensity: ${ambient_intensity}"></a-entity>
+            <a-entity cube-env-map="path: ../src/assets/cubemap/; extension: png; reflectivity: 2;" rotation="0 90 0"></a-entity>
 
             <!-- Sky -->
             ${sky}
         </a-scene>
     </body>
 </html>
-<!-- Generated automatically by AFRAME Exporter for Blender - https://silverslade.itch.io/a-frame-blender-exporter -->
+<!-- Adaptation of AFRAME Exporter for Blender - https://silverslade.itch.io/a-frame-blender-exporter -->
 ''')
 
 
@@ -229,10 +224,10 @@ class AframeExportPanel_PT_Panel(bpy.types.Panel):
         if scene.b_settings:
             row = layout.row(align=True)
             box = row.box()
-            box.prop(scene, "s_aframe_version")
-            box.prop(scene, "b_stats")
-            box.prop(scene, "b_joystick")
-            box.prop(scene, "b_vr_controllers")
+            #box.prop(scene, "s_aframe_version")
+            #box.prop(scene, "b_stats")
+            #box.prop(scene, "b_joystick")
+            #box.prop(scene, "b_vr_controllers")
             #col.prop(scene, "b_hands")
             box.prop(scene, "b_cubemap")
             box.prop(scene, "b_camera_cube")
@@ -254,58 +249,58 @@ class AframeExportPanel_PT_Panel(bpy.types.Panel):
             box.prop(scene, "b_physicallyCorrectLights")                                    
             box.separator()
         row = layout.row(align=True)         
-        row.prop(scene, 'b_player', text= "", icon="TRIA_DOWN" if getattr(scene, 'b_player') else "TRIA_RIGHT", icon_only=False, emboss=False)
-        row.label(text="Player", icon='NONE')
-        if scene.b_player:     
-            row = layout.row(align=True)           
-            box = row.box()
-            box.prop(scene, "b_raycast")
-            box.prop(scene, "f_raycast_length")
-            box.prop(scene, "f_raycast_interval")
-            box.prop(scene, "f_player_height")
-            box.prop(scene, "f_player_speed")
-            box.separator()
-        row = layout.row(align=True)      
-        row.prop(scene, 'b_interactive', text= "", icon="TRIA_DOWN" if getattr(scene, 'b_interactive') else "TRIA_RIGHT", icon_only=False, emboss=False)
-        row.label(text="Interactive / Action", icon='NONE')
-        if scene.b_interactive:     
-            row = layout.row(align=True)           
-            box = row.box()
-            box.label(text="Add interactive or action to selected", icon='NONE')  
-            box.operator("aframe.cubemap")
-            box.operator("aframe.rotation360")
-            box.operator("aframe.images")
-        
-            row = box.column_flow(columns=2, align=False)
-            row.operator("aframe.show_hide_object")
-            row.prop(scene, "s_showhide_object", text="")
-
-            row = box.column_flow(columns=2, align=False)
-            row.operator("aframe.toggle_object")
-            row.prop(scene, "s_toggle_object", text="")            
-            
-            row = box.column_flow(columns=2, align=False)
-            row.operator("aframe.linkurl")
-            row.prop(scene, "s_link", text="")
-            
-            row = box.column_flow(columns=2, align=False)
-            row.operator("aframe.videoplay")
-            row.prop(scene, "s_video", text="")
-        row = layout.row(align=True)      
-
-        row.prop(scene, 'b_bake', text= "", icon="TRIA_DOWN" if getattr(scene, 'b_bake') else "TRIA_RIGHT", icon_only=False, emboss=False)
-        row.label(text="Bake", icon='NONE')
-        if scene.b_bake:
-            row = layout.row(align=True)   
-            box = row.box()
+        # row.prop(scene, 'b_player', text= "", icon="TRIA_DOWN" if getattr(scene, 'b_player') else "TRIA_RIGHT", icon_only=False, emboss=False)
+        # row.label(text="Player", icon='NONE')
+        # if scene.b_player:     
+        #     row = layout.row(align=True)           
+        #     box = row.box()
+            #box.prop(scene, "b_raycast")
+            #box.prop(scene, "f_raycast_length")
+            #box.prop(scene, "f_raycast_interval")
+            #box.prop(scene, "f_player_height")
+            #box.prop(scene, "f_player_speed")
             #box.separator()
-            box.operator('aframe.delete_lightmap', text='0 Delete All lightmaps')        
-            box.operator('aframe.prepare', text='1 Prepare Selection for Lightmapper')
-            box.operator('aframe.bake', text='2 Bake with Lightmapper')
-            box.operator('aframe.savelm', text='3 Save Lightmaps')   
-            box.operator('aframe.clean', text='4 Clean Lightmaps')            
-            #box.separator()         
-        row = layout.row(align=True) 
+        #row = layout.row(align=True)      
+        #row.prop(scene, 'b_interactive', text= "", icon="TRIA_DOWN" if getattr(scene, 'b_interactive') else "TRIA_RIGHT", icon_only=False, emboss=False)
+        #row.label(text="Interactive / Action", icon='NONE')
+        #if scene.b_interactive:     
+            #row = layout.row(align=True)           
+        #     box = row.box()
+        #     box.label(text="Add interactive or action to selected", icon='NONE')  
+        #     box.operator("aframe.cubemap")
+        #     box.operator("aframe.rotation360")
+        #     box.operator("aframe.images")
+        
+        #     row = box.column_flow(columns=2, align=False)
+        #     row.operator("aframe.show_hide_object")
+        #     row.prop(scene, "s_showhide_object", text="")
+
+        #     row = box.column_flow(columns=2, align=False)
+        #     row.operator("aframe.toggle_object")
+        #     row.prop(scene, "s_toggle_object", text="")            
+            
+        #     row = box.column_flow(columns=2, align=False)
+        #     row.operator("aframe.linkurl")
+        #     row.prop(scene, "s_link", text="")
+            
+        #     row = box.column_flow(columns=2, align=False)
+        #     row.operator("aframe.videoplay")
+        #     row.prop(scene, "s_video", text="")
+        # row = layout.row(align=True)      
+
+        # row.prop(scene, 'b_bake', text= "", icon="TRIA_DOWN" if getattr(scene, 'b_bake') else "TRIA_RIGHT", icon_only=False, emboss=False)
+        # row.label(text="Bake", icon='NONE')
+        # if scene.b_bake:
+        #     row = layout.row(align=True)   
+        #     box = row.box()
+        #     #box.separator()
+        #     box.operator('aframe.delete_lightmap', text='0 Delete All lightmaps')        
+        #     box.operator('aframe.prepare', text='1 Prepare Selection for Lightmapper')
+        #     box.operator('aframe.bake', text='2 Bake with Lightmapper')
+        #     box.operator('aframe.savelm', text='3 Save Lightmaps')   
+        #     box.operator('aframe.clean', text='4 Clean Lightmaps')            
+        #     #box.separator()         
+        # row = layout.row(align=True) 
 
         row.prop(scene, 'b_bake_lightmap', text= "", icon="TRIA_DOWN" if getattr(scene, 'b_bake_lightmap') else "TRIA_RIGHT", icon_only=False, emboss=False)
         row.label(text="Create Lightmaps", icon='NONE')
@@ -335,7 +330,7 @@ class AframeExportPanel_PT_Panel(bpy.types.Panel):
 
         row = layout.row(align=True)       
         row = layout.row(align=True) 
-        row.operator('aframe.export', text='Export A-Frame Project')
+        row.operator('aframe.export', text='Export Scene')
         row = layout.row(align=True) 
         serve_label = "Stop Serving" if Server.instance else "Start Serving"
         row.operator('aframe.serve', text=serve_label)
@@ -370,8 +365,8 @@ class AframeBake_OT_Operator(bpy.types.Operator):
 
 class AframeClearAsset_OT_Operator(bpy.types.Operator):
     bl_idname = "aframe.clear_asset_dir"
-    bl_label = "Crear Asset Directory"
-    bl_description = "Crear Asset Directory"
+    bl_label = "Clear Asset Directory"
+    bl_description = "Clear Asset Directory"
     
     def execute(self, content):
         scene = content.scene
@@ -403,7 +398,7 @@ class AframePrepare_OT_Operator(bpy.types.Operator):
             # some exporters only use the active object
             view_layer.objects.active = obj
             bpy.context.object.TLM_ObjectProperties.tlm_mesh_lightmap_use = True
-            bpy.context.object.TLM_ObjectProperties.tlm_mesh_lightmap_resolution = '256'
+            bpy.context.object.TLM_ObjectProperties.tlm_mesh_lightmap_resolution = '512'
         
         return {'FINISHED'}
 
@@ -531,28 +526,28 @@ class AframeExport_OT_Operator(bpy.types.Operator):
             os.makedirs ( dp, exist_ok=True )
 
         #check if addon or script for correct path
-        _resources = [
-            [ ".", "favicon.ico", True ],
-            [ ".", "style.css" , True],
-            [ PATH_RESOURCES, "sky.jpg", False ],
-            [ PATH_RESOURCES, "play.png", False ],
-            [ PATH_RESOURCES, "pause.png", False],
-            [ PATH_RESOURCES, "play-skip-back.png", False],
-            [ PATH_RESOURCES, "mute.png",False ],
-            [ PATH_RESOURCES, "volume-low.png",False ],
-            [ PATH_RESOURCES, "volume-high.png",False ],
-            [ PATH_MEDIA, "image1.png",False ],
-            [ PATH_MEDIA, "image2.png",False ],                        
-            [ PATH_JAVASCRIPT, "webxr.js", True ],
-            [ PATH_JAVASCRIPT, "joystick.js", True ],
-            [ PATH_JAVASCRIPT, "camera-cube-env.js", True ],
-            [ PATH_ENVIRONMENT, "negx.jpg", True ],
-            [ PATH_ENVIRONMENT, "negy.jpg", True ],
-            [ PATH_ENVIRONMENT, "negz.jpg", True ],
-            [ PATH_ENVIRONMENT, "posx.jpg", True ],
-            [ PATH_ENVIRONMENT, "posy.jpg", True ],
-            [ PATH_ENVIRONMENT, "posz.jpg", True ],
-        ]
+        # _resources = [
+        #     [ ".", "favicon.ico", True ],
+        #     [ ".", "style.css" , True],
+        #     [ PATH_RESOURCES, "sky.jpg", False ],
+        #     [ PATH_RESOURCES, "play.png", False ],
+        #     [ PATH_RESOURCES, "pause.png", False],
+        #     [ PATH_RESOURCES, "play-skip-back.png", False],
+        #     [ PATH_RESOURCES, "mute.png",False ],
+        #     [ PATH_RESOURCES, "volume-low.png",False ],
+        #     [ PATH_RESOURCES, "volume-high.png",False ],
+        #     [ PATH_MEDIA, "image1.png",False ],
+        #     [ PATH_MEDIA, "image2.png",False ],                        
+        #     [ PATH_JAVASCRIPT, "webxr.js", True ],
+        #     [ PATH_JAVASCRIPT, "joystick.js", True ],
+        #     [ PATH_JAVASCRIPT, "camera-cube-env.js", True ],
+        #     [ PATH_ENVIRONMENT, "negx.jpg", True ],
+        #     [ PATH_ENVIRONMENT, "negy.jpg", True ],
+        #     [ PATH_ENVIRONMENT, "negz.jpg", True ],
+        #     [ PATH_ENVIRONMENT, "posx.jpg", True ],
+        #     [ PATH_ENVIRONMENT, "posy.jpg", True ],
+        #     [ PATH_ENVIRONMENT, "posz.jpg", True ],
+        # ]
 
         SRC_RES = os.path.join ( directory, PATH_RESOURCES )
         for dest_path, fname, overwrite in _resources:
@@ -702,22 +697,22 @@ class AframeExport_OT_Operator(bpy.types.Operator):
         else:
             showstats = ""
 
-        # joystick
-        if scene.b_joystick:
-            showjoystick = "joystick"
-        else:
-            showjoystick = ""
+        # # joystick
+        # if scene.b_joystick:
+        #     showjoystick = "joystick"
+        # else:
+        #     showjoystick = ""
 
-        if scene.b_raycast:
-            raycaster='raycaster = "far: '+str(scene.f_raycast_length)+'; interval: '+str(scene.f_raycast_interval)+'; objects: .clickable,.links"'
-        else:
-            raycaster=""
+        # if scene.b_raycast:
+        #     raycaster='raycaster = "far: '+str(scene.f_raycast_length)+'; interval: '+str(scene.f_raycast_interval)+'; objects: .clickable,.links"'
+        # else:
+        #     raycaster=""
 
-        #vr_controllers
-        if scene.b_vr_controllers:
-            showvr_controllers = '<a-entity id="leftHand" oculus-touch-controls="hand: left" vive-controls="hand: left"></a-entity>\n\t\t\t\t\t<a-entity id="rightHand" laser-controls oculus-touch-controls="hand: right" vive-controls="hand: right" '+raycaster+'></a-entity>'
-        else:
-            showvr_controllers = ""
+        # #vr_controllers
+        # if scene.b_vr_controllers:
+        #     showvr_controllers = '<a-entity id="leftHand" oculus-touch-controls="hand: left" vive-controls="hand: left"></a-entity>\n\t\t\t\t\t<a-entity id="rightHand" laser-controls oculus-touch-controls="hand: right" vive-controls="hand: right" '+raycaster+'></a-entity>'
+        # else:
+        #     showvr_controllers = ""
 
         #shadows
         if scene.b_cast_shadows:
@@ -789,7 +784,7 @@ _props = [
     ("bool", "b_blender_lights", "Export Blender Lights", "Export Blenedr Lights or use Aframe default ones" ),
     ("bool", "b_cast_shadows", "Cast Shadows", "Cast and Receive Shadows" ),
     ("bool", "b_lightmaps", "Use Lightmaps as Occlusion (GlTF Settings)", "GLTF Models don\'t have lightmaps: turn on this option will save lightmaps to Ambient Occlusion in the GLTF models" ),
-    ("float", "f_player_speed", "Player Speed", "Player Speed", 0.1 ),
+    ("float", "f_player_speed", "Player Speed", "Player Speed", 0.5 ),
     ("float", "f_raycast_length", "Raycast Length","Raycast lenght to interact with objects", 10.0 ),
     ("float", "f_raycast_interval", "Raycast Interval","Raycast Interval to interact with objects", 1500.0 ),
     ("str", "export_path", "Export To","Path to the folder containing the files to import", "C:/Temp/", 'FILE_PATH'),
