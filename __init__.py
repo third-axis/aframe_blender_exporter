@@ -80,7 +80,7 @@ import json
 PORT = 8001
 
 # Constants
-PATH_INDEX = "index.html"
+PATH_INDEX = "test.html"
 PATH_ASSETS = "src/assets/"
 #PATH_RESOURCES = "resources/"
 #PATH_MEDIA = "media/"
@@ -140,66 +140,9 @@ class Server(threading.Thread):
 
 # Index html a-frame template
 def default_template():
-    if not bpy.data.texts.get('index.html'):
-        tpl = bpy.data.texts.new('index.html')
-        tpl.from_string('''<!doctype html>
-<html lang="en">
-    <!-- Adaptation of AFRAME Exporter for Blender - https://silverslade.itch.io/a-frame-blender-exporter -->
-    <head>
-        <title>WebXR Application</title>
-        <link rel="icon" type="image/png" href="favicon.ico"/>
-        <meta name="description" content="3D Application">
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="https://aframe.io/releases/${aframe_version}/aframe.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
-        <script type="text/javascript" src="js/webxr.js"></script>
-        <script type="text/javascript" src="js/joystick.js"></script>
-        <script type="text/javascript" src="js/camera-cube-env.js"></script>
-        
-        <link rel="stylesheet" type="text/css" href="style.css">
-    </head>
-    <body onload="init();">
-        <a-scene ${stats} ${render_shadows} ${renderer}>
-            <!-- Assets -->
-            <a-assets>${asset}
-
-            </a-assets>
-
-            <!-- Entities -->
-            ${entity}
-
-            <!-- Camera -->
-            <a-entity id="player" 
-                position="0 -0.2 0" 
-                movement-controls="speed: ${player_speed};">
-                <a-entity id="camera" 
-                    camera="near: 0.001" 
-                    position="0 ${player_height} 0" 
-                    look-controls="pointerLockEnabled: true">
-                        <a-entity id="cursor" cursor="fuse: false;" animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 50; from: 	0.1 0.1 0.1; to: 1 1 1"
-                            position="0 0 -0.1"
-                            geometry="primitive: circle; radius: 0.001;"
-                            material="color: #CCC; shader: flat;"
-                            >
-                        </a-entity>
-                </a-entity>
-                    
-            </a-entity>
-
-            <!-- Lights -->
-            <a-entity id="Directional Light" light="intensity: ${directional_intensity}; castShadow: ${cast_shadows}; shadowBias: -0.001; shadowCameraFar: 501.02; shadowCameraBottom: 12; shadowCameraFov: 101.79; shadowCameraNear: 0; shadowCameraTop: -5; shadowCameraRight: 10; shadowCameraLeft: -10; shadowRadius: 2" position="1.36586 7.17965 1"></a-entity>
-            <a-entity id="Ambient Light"  light="type: ambient; intensity: ${ambient_intensity}"></a-entity>
-            <a-entity cube-env-map="path: ../src/assets/cubemap/; extension: png; reflectivity: 2;" rotation="0 90 0"></a-entity>
-
-            <!-- Sky -->
-            ${sky}
-        </a-scene>
-    </body>
-</html>
-<!-- Adaptation of AFRAME Exporter for Blender - https://silverslade.itch.io/a-frame-blender-exporter -->
-''')
+    if not bpy.data.texts.get('test.html'):
+        tpl = bpy.data.texts.new('test.html')
+        tpl.from_string('''<a-assets>${asset}</a-assets><a-entity>${entity}</a-entity>''')
 
 
 class AframeExportPanel_PT_Panel(bpy.types.Panel):
@@ -741,7 +684,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
         showrenderer = 'renderer="antialias: '+str(scene.b_aa).lower()+'; colorManagement: '+str(scene.b_colorManagement).lower()+'; physicallyCorrectLights: '+str(scene.b_physicallyCorrectLights).lower()+';"'
 
         default_template()
-        t = Template( bpy.data.texts['index.html'].as_string() )
+        t = Template( bpy.data.texts['test.html'].as_string() )
         s = t.substitute(
             asset=all_assets,
             entity=all_entities,
