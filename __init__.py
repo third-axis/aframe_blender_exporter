@@ -154,7 +154,7 @@ def default_template():
 
 class AframeExportPanel_PT_Panel(bpy.types.Panel):
     bl_idname = "AFRAME_EXPORT_PT_Panel"
-    bl_label = "Aframe Exporter (v 0.0.1)"
+    bl_label = "Aframe Exporter (v 0.0.2)"
     bl_category = "Aframe"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -723,14 +723,14 @@ class AframeExport_OT_Operator(bpy.types.Operator):
 
 # ------------------------------------------- REGISTER / UNREGISTER
 _props = [
-    ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "1.0.4" ),
+    ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "0.0.2" ),
     ("bool", "b_stats", "Show Stats", "Enable rendering stats in game" ),
     ("bool", "b_vr_controllers", "Enable VR Controllers (HTC,Quest)", "Enable HTC/Quest Controllers in game", True ),
     ("bool", "b_hands", "Use Hands Models", "Use hands models instead of controllers", True ),
    # ("bool", "b_joystick", "Show Joystick", "Add a joystick on screen" ),
-    ("bool", "b_cubemap", "Cube Env Map", "Enable Cube Map component" ),
-    ("str", "s_cubemap_path", "Path", "Cube Env Path", "/env/" ),
-    ("bool", "b_cubemap_background", "Enable Background", "Enable Cube Map Background" ),
+    ("bool", "b_cubemap", "Cube Env Map", "Enable Cube Map component", True ),
+    ("str", "s_cubemap_path", "Path", "Cube Env Path", "/src/assets/cubemaps" ),
+    ("bool", "b_cubemap_background", "Enable Background", "Enable Cube Map Background", True ),
     ("str", "s_cubemap_ext", "Ext", "Image file extension", "png" ),
     ("bool", "b_blender_lights", "Export Blender Lights", "Export Blenedr Lights or use Aframe default ones" ),
     ("bool", "b_cast_shadows", "Cast Shadows", "Cast and Receive Shadows" ),
@@ -738,10 +738,10 @@ _props = [
     ("float", "f_player_speed", "Player Speed", "Player Speed", 0.5 ),
     #("float", "f_raycast_length", "Raycast Length","Raycast lenght to interact with objects", 10.0 ),
     #("float", "f_raycast_interval", "Raycast Interval","Raycast Interval to interact with objects", 1500.0 ),
-    ("str", "export_path", "Export To","Path to the folder containing the files to import", "C:/Temp/", 'FILE_PATH'),
-    ("str", "s_project_name", "Name", "Project's name","aframe-prj"),
+    ("str", "export_path", "Export To","Path to the folder containing the files to import", "D:/Temp/aframeProject/src", 'FILE_PATH'),
+    ("str", "s_project_name", "Name", "Project's name",""),
     ("str", "s_output", "output","output export","output"),
-    ("bool", "b_use_lightmapper", "Use Lightmapper Add-on","Use Lightmapper for baking" ),
+    ("bool", "b_use_lightmapper", "Use Lightmapper Add-on","Use Lightmapper for baking", True ),
     ("bool", "b_camera_cube", "Camera Cube Env","Enable Camera Cube Env component"),
     ("float", "f_player_height", "Player Height","Player Height", 1.7),
     #("bool", "b_raycast", "Enable Raycast","Enable Raycast"),
@@ -752,7 +752,7 @@ _props = [
     ("bool", "b_export", "Exporter settings","b_export"),    
     ("bool", "b_bake", "Bake settings","b_bake"),         
     ("bool", "b_bake_lightmap", "Bake settings","b_bake_lightmap"),     
-    ("float", "f_lightMapIntensity", "LightMap Intensity","LightMap Intensity", 2.0),     
+    ("float", "f_lightMapIntensity", "LightMap Intensity","LightMap Intensity", 3.0),     
     ("str", "s_link", "Link Url", "Link Url" , "https://www.google.it/"),    
     ("str", "s_video", "Video File Name", "Video File Name" , "video.mp4"),        
     ("str", "s_showhide_object", "Show Hide Object", "Show Hide Object: insert object id \ne.g. Cube.001" , "Cube.001"),    
