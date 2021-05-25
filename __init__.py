@@ -1,6 +1,9 @@
 '''
+Originally
 AFRAME Exporter for Blender
 Copyright (c) 2020 Alessandro Schillaci
+
+Adapted by Kitae Kim, 2021 to be a simpler asset exporter from Blender to Aframe.
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
