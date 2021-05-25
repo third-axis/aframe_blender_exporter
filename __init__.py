@@ -154,7 +154,7 @@ class AframeExportPanel_PT_Panel(bpy.types.Panel):
             box = row.box()            
             box.prop(scene, "s_project_name")
             box.prop(scene, "export_path")
-            box.operator('aframe.clear_asset_dir', text='Clear Assets Directory')
+        #     box.operator('aframe.clear_asset_dir', text='Clear Assets Directory')
 
         row = layout.row(align=True)       
         row = layout.row(align=True) 
@@ -298,7 +298,7 @@ class AframeLoadlm_OT_Operator(bpy.types.Operator):
 class AframeExport_OT_Operator(bpy.types.Operator):
     bl_idname = "aframe.export"
     bl_label = "Export to Aframe Project"
-    bl_description = "Export AFrame"
+    bl_description = "Export AFrame Assets"
 
     def execute(self, content):
         assets = []
@@ -498,7 +498,7 @@ _props = [
     ("bool", "b_cubemap_background", "Enable Background", "Enable Cube Map Background" ),
     ("str", "s_cubemap_ext", "Ext", "Image file extension", "jpg" ),
     ("bool", "b_lightmaps", "Use Lightmaps as Occlusion (GlTF Settings)", "GLTF Models don\'t have lightmaps: turn on this option will save lightmaps to Ambient Occlusion in the GLTF models" ),
-    ("str", "export_path", "Export To","Path to the folder containing the files to import", "C:/Temp/", 'FILE_PATH'),
+    ("str", "export_path", "Export To","Path to the folder 'src'", "C:/Temp/", 'FILE_PATH'),
     ("str", "s_project_name", "Name", "Project's name","aframe-prj"),
     ("str", "s_output", "output","output export","output"),
     ("bool", "b_use_lightmapper", "Use Lightmapper Add-on","Use Lightmapper for baking" ),
