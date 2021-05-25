@@ -80,8 +80,8 @@ import json
 PORT = 8001
 
 # Constants
-PATH_INDEX = "templates/models.html"
-PATH_ASSETS = "assets/models/"
+PATH_INDEX = "assets.html"
+PATH_ASSETS = "assets/"
 PATH_ENVIRONMENT = "assets/cubemaps/"
 PATH_LIGHTMAPS = "assets/lightmaps/"
 PATH_JAVASCRIPT = "js/"
@@ -95,8 +95,8 @@ showstats = ""
 
 # Assets html a-frame template
 def default_template():
-    if not bpy.data.texts.get('models.html'):
-        tpl = bpy.data.texts.new('models.html')
+    if not bpy.data.texts.get('assets.html'):
+        tpl = bpy.data.texts.new('assets.html')
         tpl.from_string('''<a-assets>${asset}</a-assets><a-entity>${entity}</a-entity>''')
 
 
@@ -464,7 +464,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
         showrenderer = 'renderer="antialias: '+str(scene.b_aa).lower()+'; colorManagement: '+str(scene.b_colorManagement).lower()+'; physicallyCorrectLights: '+str(scene.b_physicallyCorrectLights).lower()+';"'
 
         default_template()
-        t = Template( bpy.data.texts['models.html'].as_string() )
+        t = Template( bpy.data.texts['assets.html'].as_string() )
         s = t.substitute(
             asset=all_assets,
             entity=all_entities,
