@@ -84,7 +84,7 @@ import json
 PORT = 8001
 
 # Constants
-PATH_INDEX = "blender_assets.html"
+PATH_INDEX = "templates/blender_assets.html"
 PATH_ASSETS = "assets/models/"
 #PATH_RESOURCES = "resources/"
 #PATH_MEDIA = "media/"
@@ -144,8 +144,8 @@ class Server(threading.Thread):
 
 # Assets html a-frame template
 def default_template():
-    if not bpy.data.texts.get('assets.html'):
-        tpl = bpy.data.texts.new('assets.html')
+    if not bpy.data.texts.get('blender_assets.html'):
+        tpl = bpy.data.texts.new('blender_assets.html')
         tpl.from_string('''${asset}</a-assets><a-entity>${entity}''')
 
 
@@ -688,7 +688,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
         showrenderer = 'renderer="antialias: '+str(scene.b_aa).lower()+'; colorManagement: '+str(scene.b_colorManagement).lower()+'; physicallyCorrectLights: '+str(scene.b_physicallyCorrectLights).lower()+';"'
 
         default_template()
-        t = Template( bpy.data.texts['assets.html'].as_string() )
+        t = Template( bpy.data.texts['blender_assets.html'].as_string() )
         s = t.substitute(
             asset=all_assets,
             entity=all_entities,
