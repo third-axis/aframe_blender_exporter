@@ -53,6 +53,10 @@ THIRD PARTY SOFTWARE:
     - Aframe Components - https://github.com/colinfizgig/aframe_Components
     - Icons - https://ionicons.com/
 '''
+#!/bin/python
+
+import sys
+sys.dont_write_bytecode = True
 
 
 bl_info = {
@@ -80,8 +84,8 @@ import json
 PORT = 8001
 
 # Constants
-PATH_INDEX = "assets.html"
-PATH_ASSETS = "assets/"
+PATH_INDEX = "blender_assets.html"
+PATH_ASSETS = "assets/models/"
 #PATH_RESOURCES = "resources/"
 #PATH_MEDIA = "media/"
 PATH_ENVIRONMENT = "assets/cubemaps/"
@@ -142,7 +146,7 @@ class Server(threading.Thread):
 def default_template():
     if not bpy.data.texts.get('assets.html'):
         tpl = bpy.data.texts.new('assets.html')
-        tpl.from_string('''<a-assets>${asset}</a-assets><a-entity>${entity}</a-entity>''')
+        tpl.from_string('''${asset}</a-assets><a-entity>${entity}''')
 
 
 class AframeExportPanel_PT_Panel(bpy.types.Panel):
@@ -269,19 +273,19 @@ class AframeExportPanel_PT_Panel(bpy.types.Panel):
             box = row.box()            
             box.prop(scene, "s_project_name")
             box.prop(scene, "export_path")
-            box.operator('aframe.clear_asset_dir', text='Clear Assets Directory')
+            #box.operator('aframe.clear_asset_dir', text='Clear Assets Directory')
 
         row = layout.row(align=True)       
         row = layout.row(align=True) 
         row.operator('aframe.export', text='Export Assets')
-        row = layout.row(align=True) 
-        serve_label = "Stop Serving" if Server.instance else "Start Serving"
-        row.operator('aframe.serve', text=serve_label)
-        row = layout.row(align=True) 
-        if Server.instance:
-            row.operator("wm.url_open", text="Open Preview").url = f'http://localhost:{PORT}'
-            row = layout.row(align=True) 
-        row.label(text=scene.s_output, icon='INFO')
+        # row = layout.row(align=True) 
+        # serve_label = "Stop Serving" if Server.instance else "Start Serving"
+        # row.operator('aframe.serve', text=serve_label)
+        # row = layout.row(align=True) 
+        # if Server.instance:
+        #     row.operator("wm.url_open", text="Open Preview").url = f'http://localhost:{PORT}'
+        #     row = layout.row(align=True) 
+        # row.label(text=scene.s_output, icon='INFO')
 
 
 class AframeClean_OT_Operator(bpy.types.Operator):
@@ -724,7 +728,7 @@ _props = [
     ("bool", "b_cubemap", "Cube Env Map", "Enable Cube Map component" ),
     ("str", "s_cubemap_path", "Path", "Cube Env Path", "/env/" ),
     ("bool", "b_cubemap_background", "Enable Background", "Enable Cube Map Background" ),
-    ("str", "s_cubemap_ext", "Ext", "Image file extension", "jpg" ),
+    ("str", "s_cubemap_ext", "Ext", "Image file extension", "png" ),
     ("bool", "b_blender_lights", "Export Blender Lights", "Export Blenedr Lights or use Aframe default ones" ),
     ("bool", "b_cast_shadows", "Cast Shadows", "Cast and Receive Shadows" ),
     ("bool", "b_lightmaps", "Use Lightmaps as Occlusion (GlTF Settings)", "GLTF Models don\'t have lightmaps: turn on this option will save lightmaps to Ambient Occlusion in the GLTF models" ),
