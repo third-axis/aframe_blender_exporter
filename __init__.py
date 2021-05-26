@@ -62,7 +62,7 @@ bl_info = {
     "author" : "Kitae Kim, Alessandro Schillaci",
     "description" : "Blender Exporter to AFrame WebVR application",
     "blender" : (2, 83, 0),
-    "version" : (0, 0, 3),
+    "version" : (0, 0, 4),
     "location" : "View3D",
     "warning" : "",
     "category" : "3D View"
@@ -82,7 +82,7 @@ import json
 PORT = 8001
 
 # Constants
-PATH_INDEX = "templates/blender_models.html"
+PATH_INDEX = "templates/blender.html"
 PATH_ASSETS = "assets/models/"
 #PATH_RESOURCES = "resources/"
 #PATH_MEDIA = "media/"
@@ -142,8 +142,8 @@ class Server(threading.Thread):
 
 ######    Blender Assets html A-frame template    ######-------------------------------------------------------------------------------------------------
 def default_template():
-    if not bpy.data.texts.get('blender_models.html'):
-        tpl = bpy.data.texts.new('blender_models.html')
+    if not bpy.data.texts.get('blender.html'):
+        tpl = bpy.data.texts.new('blender.html')
         tpl.from_string('''${asset}${entity}''')
 
 
@@ -559,7 +559,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
                                 if scene.b_camera_cube:
                                     reflections = ' geometry="" camera-cube-env="distance: 500; resolution: 512; repeat: true; interval: 400" '
                                 else:
-                                    reflections = ' geometry="" cube-env-map="path: ../src/assets/cubemaps; extension: '+scene.s_cubemap_ext+'; reflectivity: 0.99;" '
+                                    reflections = ' geometry="" cube-env-map="path: ../src/assets/cubemap/; extension: '+scene.s_cubemap_ext+'; reflectivity: 0.99;" '
                             elif K == "AFRAME_ANIMATION":
                                 animation = ' animation= "'+obj[K]+'" '
                             elif K == "AFRAME_HTTP_LINK":
@@ -686,7 +686,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
         showrenderer = 'renderer="antialias: '+str(scene.b_aa).lower()+'; colorManagement: '+str(scene.b_colorManagement).lower()+'; physicallyCorrectLights: '+str(scene.b_physicallyCorrectLights).lower()+';"'
 
         default_template()
-        t = Template( bpy.data.texts['blender_models.html'].as_string() )
+        t = Template( bpy.data.texts['blender.html'].as_string() )
         s = t.substitute(
             asset=all_assets,
             entity=all_entities,
@@ -718,7 +718,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
 
 # ------------------------------------------- REGISTER / UNREGISTER
 _props = [
-   # ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "0.0.3" ),
+    ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "0.0.4" ),
     ("bool", "b_stats", "Show Stats", "Enable rendering stats in game" ),
     ("bool", "b_vr_controllers", "Enable VR Controllers (HTC,Quest)", "Enable HTC/Quest Controllers in game", True ),
     ("bool", "b_hands", "Use Hands Models", "Use hands models instead of controllers", True ),
