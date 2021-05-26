@@ -62,7 +62,7 @@ bl_info = {
     "author" : "Kitae Kim, Alessandro Schillaci",
     "description" : "Blender Exporter to AFrame WebVR application",
     "blender" : (2, 83, 0),
-    "version" : (0, 0, 2),
+    "version" : (0, 0, 3),
     "location" : "View3D",
     "warning" : "",
     "category" : "3D View"
@@ -149,7 +149,7 @@ def default_template():
 
 class AframeExportPanel_PT_Panel(bpy.types.Panel):
     bl_idname = "AFRAME_EXPORT_PT_Panel"
-    bl_label = "Aframe Exporter (v 0.0.2)"
+    bl_label = "Aframe Exporter (v 0.0.3)"
     bl_category = "Aframe"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -718,7 +718,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
 
 # ------------------------------------------- REGISTER / UNREGISTER
 _props = [
-    ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "0.0.2" ),
+   # ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "0.0.3" ),
     ("bool", "b_stats", "Show Stats", "Enable rendering stats in game" ),
     ("bool", "b_vr_controllers", "Enable VR Controllers (HTC,Quest)", "Enable HTC/Quest Controllers in game", True ),
     ("bool", "b_hands", "Use Hands Models", "Use hands models instead of controllers", True ),
