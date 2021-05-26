@@ -83,11 +83,11 @@ PORT = 8001
 
 # Constants
 PATH_INDEX = "templates/blender_models.html"
-PATH_ASSETS = "src/assets/models/"
+PATH_ASSETS = "assets/models/"
 #PATH_RESOURCES = "resources/"
 #PATH_MEDIA = "media/"
-PATH_ENVIRONMENT = "src/assets/cubemap/"
-PATH_LIGHTMAPS = "src/assets/lightmaps/"
+PATH_ENVIRONMENT = "assets/cubemap/"
+PATH_LIGHTMAPS = "assets/lightmaps/"
 PATH_JAVASCRIPT = "js/"
 #AFRAME_ENABLED = "AFRAME_ENABLED"
 #AFRAME_HTTP_LINK = "AFRAME_HTTP_LINK"
@@ -140,7 +140,7 @@ class Server(threading.Thread):
             html = response.read()
 
 
-######    Blender Assets html A-frame template    ######
+######    Blender Assets html A-frame template    ######-------------------------------------------------------------------------------------------------
 def default_template():
     if not bpy.data.texts.get('blender_models.html'):
         tpl = bpy.data.texts.new('blender_models.html')
@@ -534,7 +534,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
                 #actualrotation = str(math.degrees(rotation.x))+" "+str(math.degrees(rotation.z))+" "+str(math.degrees(-rotation.y))    
                 actualrotation = "0 "+str(math.degrees(rotation.z))+" 0"    
                     
-                # custom aframe code read from CUSTOM PROPERTIES
+                # custom aframe code read from CUSTOM PROPERTIES --- This is where the paths are written for the assets and entities html code that is generated in the html file
                 reflections = ""
                 animation = ""
                 link = ""
@@ -559,7 +559,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
                                 if scene.b_camera_cube:
                                     reflections = ' geometry="" camera-cube-env="distance: 500; resolution: 512; repeat: true; interval: 400" '
                                 else:
-                                    reflections = ' geometry="" cube-env-map="path: '+scene.s_cubemap_path+'; extension: '+scene.s_cubemap_ext+'; reflectivity: 0.99;" '
+                                    reflections = ' geometry="" cube-env-map="path: ../src/assets/cubemaps; extension: '+scene.s_cubemap_ext+'; reflectivity: 0.99;" '
                             elif K == "AFRAME_ANIMATION":
                                 animation = ' animation= "'+obj[K]+'" '
                             elif K == "AFRAME_HTTP_LINK":
@@ -611,11 +611,11 @@ class AframeExport_OT_Operator(bpy.types.Operator):
                         for file in lightmap_files:
                             if obj.name+"_baked" in file:
                                 print("[LIGHTMAP] Found lightmap: "+file)
-                                baked = 'light-map-geometry="path: lightmaps/'+file+'; intensity: '+str(scene.f_lightMapIntensity)+'"'
+                                baked = 'light-map-geometry="path: ../src/assets/lightmaps/'+file+'; intensity: '+str(scene.f_lightMapIntensity)+'"'
                             
-                        filename = os.path.join ( DEST_RES, PATH_ASSETS, obj.name ) # + '.glft' )
+                        filename = os.path.join ( DEST_RES, PATH_ASSETS, obj.name ) # + '.gltf' )
                         bpy.ops.export_scene.gltf(filepath=filename, export_format='GLTF_EMBEDDED', use_selection=True)
-                        assets.append('\n\t\t\t\t<a-asset-item id="'+obj.name+'" src="./assets/'+obj.name + '.gltf'+'"></a-asset-item>')
+                        assets.append('\n\t\t\t\t<a-asset-item id="'+obj.name+'" src="../src/assets/models/'+obj.name + '.gltf'+'"></a-asset-item>')
                         if scene.b_cast_shadows:
                             entities.append('\n\t\t\t<a-'+tag+' id="#'+obj.name+'" '+gltf_model+' scale="1 1 1" position="'+actualposition+'" visible="true" shadow="cast: true" '+reflections+animation+link+custom+toggle+'></a-'+tag+'>')
                         else:
@@ -707,7 +707,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
 
         #print(s)
 
-        # Saving the main INDEX FILE
+        # Saving the main INDEX FILE -------------------------------------------------------------------------------------------------------------------
         with open( os.path.join ( DEST_RES, PATH_INDEX ), "w") as file:
             file.write(s)
 
