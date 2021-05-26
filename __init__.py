@@ -56,11 +56,6 @@ THIRD PARTY SOFTWARE:
     - Aframe Components - https://github.com/colinfizgig/aframe_Components
     - Icons - https://ionicons.com/
 '''
-#!/bin/python
-
-import sys
-sys.dont_write_bytecode = True
-
 
 bl_info = {
     "name" : "Import-Export: Aframe Asset Exporter",
@@ -87,12 +82,12 @@ import json
 PORT = 8001
 
 # Constants
-PATH_INDEX = "templates/blender_assets.html"
-PATH_ASSETS = "assets/models/"
+PATH_INDEX = "templates/blender_models.html"
+PATH_ASSETS = "src/assets/models/"
 #PATH_RESOURCES = "resources/"
 #PATH_MEDIA = "media/"
-PATH_ENVIRONMENT = "assets/cubemaps/"
-PATH_LIGHTMAPS = "assets/lightmaps/"
+PATH_ENVIRONMENT = "src/assets/cubemap/"
+PATH_LIGHTMAPS = "src/assets/lightmaps/"
 PATH_JAVASCRIPT = "js/"
 #AFRAME_ENABLED = "AFRAME_ENABLED"
 #AFRAME_HTTP_LINK = "AFRAME_HTTP_LINK"
@@ -145,11 +140,11 @@ class Server(threading.Thread):
             html = response.read()
 
 
-# Assets html a-frame template
+######    Blender Assets html A-frame template    ######
 def default_template():
-    if not bpy.data.texts.get('blender_assets.html'):
-        tpl = bpy.data.texts.new('blender_assets.html')
-        tpl.from_string('''${asset}</a-assets><a-entity>${entity}''')
+    if not bpy.data.texts.get('blender_models.html'):
+        tpl = bpy.data.texts.new('blender_models.html')
+        tpl.from_string('''${asset}${entity}''')
 
 
 class AframeExportPanel_PT_Panel(bpy.types.Panel):
@@ -691,7 +686,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
         showrenderer = 'renderer="antialias: '+str(scene.b_aa).lower()+'; colorManagement: '+str(scene.b_colorManagement).lower()+'; physicallyCorrectLights: '+str(scene.b_physicallyCorrectLights).lower()+';"'
 
         default_template()
-        t = Template( bpy.data.texts['blender_assets.html'].as_string() )
+        t = Template( bpy.data.texts['blender_models.html'].as_string() )
         s = t.substitute(
             asset=all_assets,
             entity=all_entities,
@@ -738,7 +733,7 @@ _props = [
     ("float", "f_player_speed", "Player Speed", "Player Speed", 0.5 ),
     #("float", "f_raycast_length", "Raycast Length","Raycast lenght to interact with objects", 10.0 ),
     #("float", "f_raycast_interval", "Raycast Interval","Raycast Interval to interact with objects", 1500.0 ),
-    ("str", "export_path", "Export To","Path to the folder containing the files to import", "D:/Temp/aframeProject/src", 'FILE_PATH'),
+    ("str", "export_path", "Export To","Path to the folder containing the files to import", "D:/Temp/aframeProject", 'FILE_PATH'),
     ("str", "s_project_name", "Name", "Project's name",""),
     ("str", "s_output", "output","output export","output"),
     ("bool", "b_use_lightmapper", "Use Lightmapper Add-on","Use Lightmapper for baking", True ),
