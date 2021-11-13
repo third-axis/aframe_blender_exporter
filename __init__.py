@@ -31,37 +31,13 @@ https://www.facebook.com/groups/134106979989778/
 '''
 
 '''
-USAGE:
-    - create new Blender project
-    - install this addon
-    - add a right managed CUSTOM PROPERTY
-    - open the addon and set your configuration
-    - click on "Export A-Frame Project" button
-    - your project will be saved in the export directory
-    - launch "live-server" (install it with "npm install -g live-server") or "python -m SimpleHTTPServer"
-
-AVAILABLE CUSTOM_PROPERTIES:
-    - AFRAME_CUBEMAP: if present, set reflections on to the mesh object (metal -> 1, rough -> 0)
-    - AFRAME_ANIMATION:  aframe animation tag. Samples:
-        - property: rotation; to: 0 360 0; loop: true; dur: 10000;
-        - property: position; to: 1 8 -10; dur: 2000; easing: linear; loop: true;
-    - AFRAME_HTTP_LINK: html link when click on object       
-    - AFRAME_VIDEO: target=mp4 video to show
-    - AFRAME_IMAGES: click to swap images e.g: {"1": "image1.jpg", "2": "image2.jpg"}
-    - AFRAME_SHOW_HIDE_OBJECT: click to show or hide another 3d object
-
-THIRD PARTY SOFTWARE:
-    This Addon Uses the following 3rdParty software (or their integration/modification):
-    - Aframe Joystick - https://github.com/mrturck/aframe-joystick
-    - Aframe Components - https://github.com/colinfizgig/aframe_Components
-    - Icons - https://ionicons.com/
 '''
 
 bl_info = {
     "name" : "Import-Export: Aframe Asset Exporter",
     "author" : "Kitae Kim, Alessandro Schillaci",
-    "description" : "Blender Exporter to AFrame WebVR application",
-    "blender" : (2, 83, 0),
+    "description" : "Blender Exporter to AFrame WebXR",
+    "blender" : (2, 93, 3),
     "version" : (0, 0, 8),
     "location" : "View3D",
     "warning" : "",
@@ -84,19 +60,9 @@ PORT = 8001
 # Constants
 PATH_INDEX = "templates/blender.html"
 PATH_ASSETS = "assets/models/"
-#PATH_RESOURCES = "resources/"
-#PATH_MEDIA = "media/"
 PATH_ENVIRONMENT = "assets/cubemap/"
 PATH_LIGHTMAPS = "assets/lightmaps/"
 PATH_JAVASCRIPT = "js/"
-#AFRAME_ENABLED = "AFRAME_ENABLED"
-#AFRAME_HTTP_LINK = "AFRAME_HTTP_LINK"
-#AFRAME_ANIMATION = "AFRAME_ANIMATION"
-#AFRAME_VIDEO = "AFRAME_VIDEO"
-#AFRAME_IMAGES = "AFRAME_IMAGES"
-#AFRAME_DOWNLOAD = "AFRAME_DOWNLOAD"
-#AFRAME_VIDEO_AUTOPLAY = "AFRAME_VIDEO_AUTOPLAY"
-#AFRAME_VIDEO_STREAM = "AFRAME_VIDEO_STREAM"
 
 assets = []
 entities = []
@@ -149,7 +115,7 @@ def default_template():
 
 class AframeExportPanel_PT_Panel(bpy.types.Panel):
     bl_idname = "AFRAME_EXPORT_PT_Panel"
-    bl_label = "Aframe Exporter (v 0.0.7)"
+    bl_label = "Aframe Exporter (v 0.0.8)"
     bl_category = "Aframe"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -615,7 +581,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
                                 baked = 'light-map-geometry="path: ../src/assets/lightmaps/'+file+'; intensity: '+str(scene.f_lightMapIntensity)+'"'
                             
                         filename = os.path.join ( DEST_RES, PATH_ASSETS, obj.name ) # + '.glb' )
-                        bpy.ops.export_scene.gltf(filepath=filename, export_format='GLB', use_selection=True, export_image_format='JPEG', export_texture_dir='', export_texcoords=True, export_normals=True, export_draco_mesh_compression_enable=True, export_draco_mesh_compression_level=6, export_draco_position_quantization=14, export_draco_normal_quantization=10, export_draco_texcoord_quantization=12, export_draco_color_quantization=10, export_draco_generic_quantization=12)
+                        bpy.ops.export_scene.gltf(filepath=filename, export_format='GLB', use_selection=True, export_image_format='JPEG', export_texture_dir='', export_texcoords=True, export_normals=True, export_draco_mesh_compression_enable=True, export_draco_mesh_compression_level=6, export_draco_position_quantization=14, export_draco_normal_quantization=10, export_draco_texcoord_quantization=12, export_draco_color_quantization=10, export_draco_generic_quantization=12, export_tangents=False, export_materials='EXPORT', export_colors=True, use_mesh_edges=False, use_mesh_vertices=False, export_cameras=False, export_selected=False, use_selection=False, use_visible=False, use_renderable=False, use_active_collection=False, export_extras=False, export_yup=True, export_apply=False, export_animations=True, export_frame_range=True, export_frame_step=1, export_force_sampling=True, export_nla_strips=True, export_def_bones=False, export_current_frame=False, export_skins=True, export_all_influences=False, export_morph=True, export_morph_normal=True, export_morph_tangent=False, export_lights=False, export_displacement=False, will_save_settings=False, filter_glob='*.glb;*.gltf')
                         assets.append('\n\t\t\t\t<a-asset-item id="'+obj.name+'" src="../src/assets/models/'+obj.name + '.glb'+'"></a-asset-item>')
                         if scene.b_cast_shadows:
                             entities.append('\n\t\t\t<a-'+tag+' id="#'+obj.name+'" '+gltf_model+' scale="1 1 1" position="'+actualposition+'" visible="true" shadow="cast: true" shadow="receive: true"'+reflections+animation+link+custom+toggle+'></a-'+tag+'>')
@@ -719,7 +685,7 @@ class AframeExport_OT_Operator(bpy.types.Operator):
 
 # ------------------------------------------- REGISTER / UNREGISTER
 _props = [
-    ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "0.0.7" ),
+    ("str", "s_aframe_version", "A-Frame version", "A-Frame version", "0.0.8" ),
     ("bool", "b_stats", "Show Stats", "Enable rendering stats in game" ),
     ("bool", "b_vr_controllers", "Enable VR Controllers (HTC,Quest)", "Enable HTC/Quest Controllers in game", True ),
     ("bool", "b_hands", "Use Hands Models", "Use hands models instead of controllers", True ),
@@ -728,7 +694,7 @@ _props = [
     ("str", "s_cubemap_path", "Path", "Cube Env Path", "/src/assets/cubemap" ),
     ("bool", "b_cubemap_background", "Enable Background", "Enable Cube Map Background", False ),
     ("str", "s_cubemap_ext", "Ext", "Image file extension", "png" ),
-    ("bool", "b_blender_lights", "Export Blender Lights", "Export Blenedr Lights or use Aframe default ones" ),
+    ("bool", "b_blender_lights", "Export Blender Lights", "Export Blender Lights or use Aframe default ones" ),
     ("bool", "b_cast_shadows", "Cast Shadows", "Cast and Receive Shadows" ),
     ("bool", "b_lightmaps", "Use Lightmaps as Occlusion (GlTF Settings)", "GLTF Models don\'t have lightmaps: turn on this option will save lightmaps to Ambient Occlusion in the GLTF models" ),
     ("float", "f_player_speed", "Player Speed", "Player Speed", 0.5 ),
@@ -748,7 +714,7 @@ _props = [
     ("bool", "b_export", "Exporter settings","b_export"),    
     ("bool", "b_bake", "Bake settings","b_bake"),         
     ("bool", "b_bake_lightmap", "Bake settings","b_bake_lightmap"),     
-    ("float", "f_lightMapIntensity", "LightMap Intensity","LightMap Intensity", 3.0),     
+    ("float", "f_lightMapIntensity", "LightMap Intensity","LightMap Intensity", 2.0),     
     ("str", "s_link", "Link Url", "Link Url" , "https://www.google.it/"),    
     ("str", "s_video", "Video File Name", "Video File Name" , "video.mp4"),        
     ("str", "s_showhide_object", "Show Hide Object", "Show Hide Object: insert object id \ne.g. Cube.001" , "Cube.001"),    
